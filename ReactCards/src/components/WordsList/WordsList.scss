@@ -1,0 +1,57 @@
+.words-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0px;
+    display: flex;
+    top: 60px;
+
+    &.closed {
+        right: calc(-325px);
+        display: none;
+
+
+    }
+
+    .open-close {
+        background-color: rgba(120, 186, 190, 0.784);
+        height: 100vh;
+        width: 40px;
+    }
+
+    .words-list {
+        list-style: none;
+        background-color: white;
+        height: 100vh;
+        width: 100vw;
+        overflow-y: scroll;
+        padding-bottom: 120px;
+
+        li {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 0 20px;
+            background-color: rgba(122, 202, 206, 0.385);
+
+
+
+            button {
+                background-image: url('../../assets/cross-red.png');
+                background-size: 15px;
+                height: 40px;
+                border-radius: 20px;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-color: rgba(40, 62, 63, 0.071);
+
+            }
+
+            &:nth-child(2n) {
+                background-color: white;
+
+
+            }
+        }
+    }
+}
