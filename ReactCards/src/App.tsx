@@ -57,6 +57,20 @@ function App() {
     })
   }, [selected])
 
+  useEffect(() => {
+    const savedPacks = localStorage.getItem('packs');
+    if (!savedPacks) {
+      // Сохраняем текущий выбранный пакет один раз
+      const initialPack = packs.find(item => item.name === selected);
+      if (!initialPack) return;
+      const packArray = initialPack.content.split('||||').map(item => {
+        const [english, russian] = item.split(' - ');
+        return { english, russian };
+      });
+      localStorage.setItem('packs', JSON.stringify(packArray));
+    }
+  }, []);
+
   const toggleWords = () => {
     setIsListOpen(prev => !prev)
   }
@@ -68,7 +82,10 @@ function App() {
       </header>
       <div className="card-container">
         <SelectPanel onChangeSelected={setSelected} pack={packs} />
-        <Card addWord={addWordToList} pack={selectedPack} selectedWords={wordsList} hardmode={isOnlySelected} />
+        <Card addWord={addWordToList}
+          pack={selectedPack}
+          selectedWords={wordsList}
+          hardmode={isOnlySelected} />
 
       </div>
       <WordsList deleteWord={deleteWordFromList} wordList={wordsList} isOpen={isListOpen} />

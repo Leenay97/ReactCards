@@ -12,6 +12,15 @@ const Card = ({ addWord, pack, selectedWords, hardmode }: CardProps) => {
     const [currentCard, setCurrentCard] = useState(randomize())
     const [isRussianFirst, setIsRussianFirst] = useState<boolean>(false)
 
+    useEffect(() => {
+        const local = localStorage.getItem('packs')
+        if (local && JSON.parse(local).length > 0) {
+            setCurrentCards(JSON.parse(local))
+        } else {
+            setCurrentCards(pack)
+        }
+    }, [pack])
+
     function randomize(arr?: OneWord[]) {
         let rnd = 0;
         if (arr) {
@@ -27,8 +36,12 @@ const Card = ({ addWord, pack, selectedWords, hardmode }: CardProps) => {
             setCurrentCards(selectedWords)
             setCurrentCard(randomize(selectedWords))
         } else {
-            setCurrentCards(pack)
-            setCurrentCard(randomize(pack))
+            const local = localStorage.getItem('packs')
+            if (local && JSON.parse(local).length > 0) {
+                setCurrentCards(JSON.parse(local))
+            } else {
+                setCurrentCards(pack)
+            }
         }
     }
 
@@ -36,9 +49,11 @@ const Card = ({ addWord, pack, selectedWords, hardmode }: CardProps) => {
         if (currentCards.length === 0) {
             if (hardmode) {
                 setCurrentCards(selectedWords)
+
             } else {
                 setCurrentCards(pack)
             }
+            setIsFlipped(false)
         } else {
             changeCard(e, true)
         }
@@ -52,6 +67,9 @@ const Card = ({ addWord, pack, selectedWords, hardmode }: CardProps) => {
         let newCards = currentCards;
         if (success) {
             newCards = currentCards.filter((_, i) => i !== currentCard)
+            if (!hardmode) {
+                localStorage.setItem('packs', JSON.stringify(newCards))
+            }
             setCurrentCards(newCards)
         }
         if (!success) {
@@ -69,14 +87,17 @@ const Card = ({ addWord, pack, selectedWords, hardmode }: CardProps) => {
     const flipCard = () => {
         setIsFlipped(state => !state)
     }
-
-    useEffect(() => {
-        setCurrentCards(pack)
-    }, [pack])
-
+    
     useEffect(() => {
         modeChange()
     }, [hardmode])
+
+    useEffect(() => {
+        if (currentCards.length > 0) {
+            setCurrentCard(randomize(currentCards))
+            setIsFlipped(false)
+        }
+    }, [currentCards])
 
     useEffect(() => {
         if (currentCards.length === 0) {
@@ -87,7 +108,7 @@ const Card = ({ addWord, pack, selectedWords, hardmode }: CardProps) => {
             } else {
                 isFlipped ? setCardContent(currentCards[currentCard]?.russian) : setCardContent(currentCards[currentCard]?.english)
             }
-            
+
         }
 
     }, [currentCards, isFlipped, currentCard, isRussianFirst])
